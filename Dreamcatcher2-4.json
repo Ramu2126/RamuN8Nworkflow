@@ -1,0 +1,1253 @@
+{
+  "name": "Dreamcatcher2-4",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const { heading, subheading, cta, link, hook } = $json;\n\nconst mainHeading = heading || hook;\nconst mainSubheading = subheading || tip;\n\n// Create HTML for the flyer\nconst html = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <link href=\"https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap\" rel=\"stylesheet\">\n  <style>\n    * { margin: 0; padding: 0; box-sizing: border-box; }\n    body {\n      width: 1080px;\n      height: 1080px;\n      font-family: 'Inter', sans-serif;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      padding: 80px;\n    }\n    .content {\n      background: rgba(255, 255, 255, 0.95);\n      border-radius: 30px;\n      padding: 60px 40px;\n      box-shadow: 0 20px 60px rgba(0,0,0,0.15);\n      text-align: center;\n      max-width: 900px;\n      width: 100%;\n    }\n    h1 {\n      font-family: 'Poppins', sans-serif;\n      font-size: 48px;\n      font-weight: 800;\n      line-height: 1.2;\n      margin-bottom: 30px;\n      color: #1a1a1a;\n      text-transform: uppercase;\n      letter-spacing: -0.5px;\n    }\n    .subheading {\n      font-size: 28px;\n      font-weight: 500;\n      line-height: 1.4;\n      margin-bottom: 25px;\n      color: #333;\n    }\n    .cta {\n      font-size: 24px;\n      font-weight: 700;\n      margin-bottom: 20px;\n      color: #667eea;\n      text-transform: uppercase;\n    }\n    .link {\n      font-size: 20px;\n      font-weight: 600;\n      color: #764ba2;\n      text-decoration: none;\n    }\n    .highlight {\n      background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);\n      -webkit-background-clip: text;\n      -webkit-text-fill-color: transparent;\n      background-clip: text;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"content\">\n    <h1><span class=\"highlight\">${mainHeading || 'Your App Here'}</span></h1>\n    <div class=\"subheading\">${mainSubheading || 'Amazing features waiting for you'}</div>\n    <div class=\"cta\">${cta || 'Get Started Today'}</div>\n    <div class=\"link\">${link || 'www.yourapp.com'}</div>\n  </div>\n</body>\n</html>\n`;\n\nreturn [{ json: { html, caption: $json.telegramCaption, cleanCaption: $json.cleanCaption } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        48
+      ],
+      "id": "12e8f9a3-7983-4d65-8a6e-319006679dde",
+      "name": "Create HTML Flyer"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://hcti.io/v1/image",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ html: $json.html, viewport_width: 1080, viewport_height: 1080, device_scale: 2 }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        80
+      ],
+      "id": "b02724e8-281f-412e-b45a-300e282442c7",
+      "name": "Convert HTML to Image",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "RHuhNrT7dZW1azKV",
+          "name": "Htci credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        96
+      ],
+      "id": "66b08704-76b3-477b-b65d-446536e8f45d",
+      "name": "Download Image"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 14 * * 1-5"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -912,
+        32
+      ],
+      "id": "175f0f3c-caf4-4704-b7fd-387672093a17",
+      "name": "Schedule Trigger2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1tBHu5yGbOR0Ga2FQN3RadUE0g0os5giDsaYTahy0qWk",
+          "mode": "list",
+          "cachedResultName": "sheet3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tBHu5yGbOR0Ga2FQN3RadUE0g0os5giDsaYTahy0qWk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 933118813,
+          "mode": "list",
+          "cachedResultName": "active flyer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tBHu5yGbOR0Ga2FQN3RadUE0g0os5giDsaYTahy0qWk/edit#gid=933118813"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -640,
+        48
+      ],
+      "id": "869721ed-a421-4b52-8c69-8b26e0f92f02",
+      "name": "Get Sheet Data1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OfuDrLGvHWOD9met",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are creating a branded marketing flyer for \"{{ $json[\"App Idea\"] }}\".\nTarget Users: {{ $json[\"Target Users\"] }}\nProblem Solved: {{ $json[\"Problem Solved\"] }}\nKey Features: {{ $json[\"Key Features\"] }}\nUse the following content to generate three short text elements for a social media image:\n\t1.\tMain Heading: A bold, catchy title (10–14 words max),  which highlights the App idea derived from the \"{{ $json[\"App Idea\"] }}\" content. Capitalize most words.\n\t2.\tSubheading: Catchy bullet points around (7–10 words max) derived from the {{ $json[\"Key Features\"] }} content.\n\t3.\tLink for flyer: Add this exact text:  {{ $json[\"Flyer Link\"] }}\n\n\n💬 Tone: Friendly, trustworthy, empowering — like talking to a friend who's done their research.\n\n✨ Output Format:\n\n**Hook:** <your eye-catching Heading>\n\n**Tip:** <your unique insight or actionable fact>\n\n**CTA:** <your reason to download or try App>\n\n**Main Heading:** <your eye-catching Main Heading>\n\n**Subheading:** <sub heading>\n\n**Link:** <Link for flyer>\n\n",
+        "options": {
+          "systemMessage": "Create a optimised promt for creating the flyer \"{{ $json[\"App Idea\"] }}\".\nTarget Users: {{ $json[\"Target Users\"] }}\nProblem Solved: {{ $json[\"Problem Solved\"] }}\nKey Features: {{ $json[\"Key Features\"] }}\n### Instructions for AI:\n- Theme:\n{{ $json[\"Target Users\"] }} → map to style:\n  - Kids <5: playful, cartoon-like, bright colors\n  - Kids 5–12: fun, educational, interactive\n  - Teens: modern, minimalistic, bold\n  - Adults: professional, clean\n- Use visuals that match the theme (colors, style, and imagery)\n- Keep text short and catchy"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -368,
+        64
+      ],
+      "id": "05779611-8fe5-4b22-8a30-f69e0b02b05d",
+      "name": "Generate Text Content1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        288
+      ],
+      "id": "0a3ac862-c27e-4779-8930-74e68b16e687",
+      "name": "Gemini Text Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "UrDbN9rdM2KtTNXk",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json.output || '';\n\n// Helper function to extract content by label\nfunction extractSection(label, text) {\n  const pattern = new RegExp(`\\\\*\\\\*${label}:\\\\*\\\\*\\\\s*([\\\\s\\\\S]*?)(?=\\\\*\\\\*|$)`, 'i');\n  const match = text.match(pattern);\n  return match ? match[1].trim() : '';\n}\n\n// Extract all fields\nconst hook = extractSection('Hook', input);\nconst tip = extractSection('Tip', input);\nconst cta = extractSection('CTA', input);\nconst heading = extractSection('Main Heading', input);\nconst subheading = extractSection('Subheading', input);\nconst link = extractSection('Link', input);\n\n// Create clean caption for Telegram\nconst telegramCaption = `${hook || heading}\\n\\n${tip || subheading}\\n\\n${cta}\\n\\n${link}`;\n\nreturn [{\n  json: {\n    hook,\n    tip,\n    cta,\n    heading,\n    subheading,\n    link,\n    telegramCaption,\n    cleanCaption: `🎯 ${hook || heading}\\n\\n💡 ${tip || subheading}\\n\\n👉 ${cta}\\n\\n🔗 ${link}`\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        64
+      ],
+      "id": "2ab262f5-b146-4aaa-9942-215fede31b85",
+      "name": "Extract Text Elements1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store binary data reference and pass it through\nconst binaryData = $binary.data;\n\nreturn [\n  {\n    json: {\n      ...$json,\n      binaryReference: 'data'\n    },\n    binary: {\n      data: binaryData\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        -448
+      ],
+      "id": "75210728-7690-4839-82aa-b5949039ba42",
+      "name": "Store Binary Reference"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pass binary data specifically for Facebook\nconst binaryData = $binary.data;\n\nreturn [\n  {\n    json: $json,\n    binary: {\n      data: binaryData\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2256,
+        -464
+      ],
+      "id": "d7a7ae8e-bfa3-4b96-8425-6797f0536ff0",
+      "name": "Pass for Facebook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pass binary data specifically for Instagram upload\nconst binaryData = $binary.data;\n\nreturn [\n  {\n    json: $json,\n    binary: {\n      data: binaryData\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        -288
+      ],
+      "id": "cc59b814-b1bb-4507-bfcc-630288aae9fc",
+      "name": "Pass for Instagram"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1664,
+        -448
+      ],
+      "id": "2a220afd-9f44-4aeb-988d-7741998a61de",
+      "name": "Check Approval2"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "491305090740021",
+        "edge": "photos",
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $json.cleanCaption }}"
+              },
+              {
+                "name": "published",
+                "value": "true"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2464,
+        -464
+      ],
+      "id": "766ba951-36c3-4b30-a3fc-bd2da9ef6d10",
+      "name": "Post to Facebook2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://image-ninja-host-skillnewyork.replit.app/api/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "numpyninja"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2496,
+        -256
+      ],
+      "id": "61ce7a76-2aad-466f-9932-bece151b50d6",
+      "name": "Upload for Instagram2"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "17841475401633835",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "image_url",
+                "value": "={{ $json.data }}"
+              },
+              {
+                "name": "caption",
+                "value": "={{ $json.cleanCaption }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2688,
+        -272
+      ],
+      "id": "7d67f1e3-a772-4272-b863-d2aabe7e6482",
+      "name": "Create Instagram Media2"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "17841475401633835",
+        "edge": "media_publish",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "creation_id",
+                "value": "={{ $json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        -256
+      ],
+      "id": "3ca6a665-7426-4975-936f-c5bbd3e22147",
+      "name": "Publish to Instagram2"
+    },
+    {
+      "parameters": {
+        "name": "=flyer.xlxs",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1YRGCkAqFSgTv_LIr0lEXYFF0rM7eyTkF",
+          "mode": "list",
+          "cachedResultName": "dreamcatcher2-4 ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1YRGCkAqFSgTv_LIr0lEXYFF0rM7eyTkF"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2256,
+        -656
+      ],
+      "id": "659701f2-ca7f-4b9d-94ec-441cea794548",
+      "name": "Upload to My Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EF6fbPNheWzl6VG1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "5186680385",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ $json.caption }}",
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        -384
+      ],
+      "id": "c1bb2d5f-83da-4f9e-b473-4873249f9738",
+      "name": "Send Flyer to Telegram2",
+      "webhookId": "e9e48c68-0e44-40ba-9e0b-51779ab095f1",
+      "credentials": {
+        "telegramApi": {
+          "id": "HYznP4NtpIOHpybM",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "5186680385",
+        "message": "✅ Approve for Facebook & Instagram?",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1408,
+        -432
+      ],
+      "id": "e0d556f0-e49e-41b9-a354-dfca6f7b5a06",
+      "name": "Wait for Approval5",
+      "webhookId": "6417baa9-c897-496c-ac11-286b9178be35",
+      "credentials": {
+        "telegramApi": {
+          "id": "HYznP4NtpIOHpybM",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "5186680385",
+        "message": "=data",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1840,
+        464
+      ],
+      "id": "edc41aa9-d0db-42ef-8267-9852ff53f992",
+      "name": "approve/reject",
+      "webhookId": "611e9563-a512-415f-ba88-75270fb00807",
+      "credentials": {
+        "telegramApi": {
+          "id": "HYznP4NtpIOHpybM",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        800,
+        400
+      ],
+      "id": "50649d70-e14e-41f6-8d0c-b7302528a840",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EF6fbPNheWzl6VG1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1YRGCkAqFSgTv_LIr0lEXYFF0rM7eyTkF",
+          "mode": "list",
+          "cachedResultName": "dreamcatcher2-4 ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1YRGCkAqFSgTv_LIr0lEXYFF0rM7eyTkF"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        816,
+        160
+      ],
+      "id": "f8f5cb71-93f2-4869-8b92-3bc17472876b",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EF6fbPNheWzl6VG1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        464
+      ],
+      "id": "87053bca-76cc-42ce-a73b-0b5a53010f1f",
+      "name": "Download file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EF6fbPNheWzl6VG1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "5186680385",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1648,
+        464
+      ],
+      "id": "b013767a-accb-4e34-b3f3-5186f5b1584d",
+      "name": "Send photo to Tim",
+      "webhookId": "e89ddc40-9d95-4139-9ff5-085e863ac244",
+      "credentials": {
+        "telegramApi": {
+          "id": "HYznP4NtpIOHpybM",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Send the image and content to Telegram. \n## Need to add the proper chat ID along with credentials",
+        "height": 412,
+        "width": 284
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1056,
+        256
+      ],
+      "typeVersion": 1,
+      "id": "ebeccbcc-3222-49c3-a9ae-224b7449b133",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Send the image and content to Telegram for approval/rejection. \n## Need to add the proper chat ID along with credentials",
+        "height": 484,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1552,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "9825d81c-236e-42d9-834c-e0ac16db4436",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "17841475401633835",
+        "edge": "media_publish",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "creation_id",
+                "value": "={{ $json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3216,
+        544
+      ],
+      "id": "381c3164-fa62-4e81-8ba4-d76bfd1024f9",
+      "name": "instagram publish"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "=v22.0",
+        "node": "17841475401633835",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "image_url",
+                "value": "={{ $json.data }}"
+              },
+              {
+                "name": "caption",
+                "value": "={{$json.caption}}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2928,
+        512
+      ],
+      "id": "5df8f99a-aa1d-4c1e-b184-79fc62e467f3",
+      "name": "instagram upload",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "UvIARTKgLrh5bKkh",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2448,
+        304
+      ],
+      "id": "45afffa4-5727-4c23-96c7-8c1465adec53",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "EF6fbPNheWzl6VG1",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "75fa6a8d-3e64-4e6b-b204-320f4b56debf",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2256,
+        480
+      ],
+      "id": "7959fc0c-8895-498c-8e2a-02c80aaedc94",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PwT3qkOxaDEGQKLp",
+          "mode": "list",
+          "cachedResultName": "BusinessFlyer"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2256,
+        768
+      ],
+      "id": "9353f620-8c7d-484b-9983-c782e15d1cb6",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2048,
+        464
+      ],
+      "id": "daac277a-101f-48e6-a75b-ba07628a0741",
+      "name": "Wait",
+      "webhookId": "6b59f7b0-bd72-4ba8-832c-661cee8fa809"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "491305090740021",
+        "edge": "photos",
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $json.hook }}\n{{ $json.tip }}\n{{ $json.cta }}"
+              },
+              {
+                "name": "published",
+                "value": "true"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        2784,
+        80
+      ],
+      "id": "27861193-3b6a-4fe4-b3bd-1c1f39ab04f6",
+      "name": "Facebook Graph API1",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "UvIARTKgLrh5bKkh",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v22.0",
+        "node": "491305090740021",
+        "edge": "photos",
+        "options": {
+          "fields": {
+            "field": [
+              {
+                "name": "id"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        3040,
+        64
+      ],
+      "id": "031bc983-5a5e-47ae-8a98-ecccf6ae9430",
+      "name": "Facebook Graph API2",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "UvIARTKgLrh5bKkh",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://image-ninja-host-skillnewyork.replit.app/api/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "numpyninja"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        640
+      ],
+      "id": "e7c5c6b1-ffe2-48de-a362-0f879240dc77",
+      "name": "Numpy server Hosting"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "5186680385",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ $json.caption }}",
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        432
+      ],
+      "id": "6b9bf2d0-f978-45b8-853e-8eb092c212d3",
+      "name": "Send Flyer to Telegram",
+      "webhookId": "e9e48c68-0e44-40ba-9e0b-51779ab095f1",
+      "credentials": {
+        "telegramApi": {
+          "id": "HYznP4NtpIOHpybM",
+          "name": "Telegram account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create HTML Flyer": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert HTML to Image": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get Sheet Data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sheet Data1": {
+      "main": [
+        [
+          {
+            "node": "Generate Text Content1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Text Content1": {
+      "main": [
+        [
+          {
+            "node": "Extract Text Elements1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Text Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Text Content1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Text Elements1": {
+      "main": [
+        [
+          {
+            "node": "Create HTML Flyer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Binary Reference": {
+      "main": [
+        [
+          {
+            "node": "Pass for Facebook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pass for Instagram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload to My Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pass for Facebook": {
+      "main": [
+        [
+          {
+            "node": "Post to Facebook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pass for Instagram": {
+      "main": [
+        [
+          {
+            "node": "Upload for Instagram2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Approval2": {
+      "main": [
+        [
+          {
+            "node": "Store Binary Reference",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload for Instagram2": {
+      "main": [
+        [
+          {
+            "node": "Create Instagram Media2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Instagram Media2": {
+      "main": [
+        [
+          {
+            "node": "Publish to Instagram2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Flyer to Telegram2": {
+      "main": [
+        [
+          {
+            "node": "Wait for Approval5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Approval5": {
+      "main": [
+        [
+          {
+            "node": "Check Approval2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "approve/reject": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Send Flyer to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file2": {
+      "main": [
+        [
+          {
+            "node": "Send photo to Tim",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send photo to Tim": {
+      "main": [
+        [
+          {
+            "node": "approve/reject",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "instagram upload": {
+      "main": [
+        [
+          {
+            "node": "instagram publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "instagram upload",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Numpy server Hosting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API1": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Numpy server Hosting": {
+      "main": [
+        [
+          {
+            "node": "instagram upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Flyer to Telegram": {
+      "main": [
+        [
+          {
+            "node": "Download file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "425aa1dc-f6b3-48eb-ad1a-3a7120240b3f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0f9ba6350e35768e33381c9d16f8ba83278d60e206b6d3d53013ac77b0baf2f"
+  },
+  "id": "r0RO4aYjSefaEH2N",
+  "tags": []
+}
